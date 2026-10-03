@@ -68,17 +68,17 @@ class MainActivity : AppCompatActivity() {
             idadeSegundos = idadeMinutos * 60
 
             if (setMostrarAnos.isChecked) {
-                tvExibirIdade.text = "A sua idade em anos é $idadeAnos anos."
+                tvExibirIdade.text = "Você é Corintiano há $idadeAnos anos."
             } else if (setMostrarMeses.isChecked) {
-                tvExibirIdade.text = "A sua idade em meses é $idadeMeses meses."
+                tvExibirIdade.text = "Você é Corintiano há $idadeMeses meses."
             } else if (setMostrarDias.isChecked) {
-                tvExibirIdade.text = "A sua idade em dias é $idadeDias dias."
+                tvExibirIdade.text = "Você é Corintiano há $idadeDias dias."
             } else if (setMostrarHoras.isChecked) {
-                tvExibirIdade.text = "A sua idade em horas é $idadeHoras horas."
+                tvExibirIdade.text = "Você é Corintiano há $idadeHoras horas."
             } else if (setMostrarMinutos.isChecked) {
-                tvExibirIdade.text = "A sua idade em minutos é $idadeMinutos minutos."
+                tvExibirIdade.text = "Você é Corintiano há $idadeMinutos minutos."
             } else if (setMostrarSegundos.isChecked) {
-                tvExibirIdade.text = "A sua idade em segundos é $idadeSegundos segundos."
+                tvExibirIdade.text = "Você é Corintiano há $idadeSegundos segundos."
             } else {
                 tvExibirIdade.text = "Selecione uma opção de visualização de idade!"
             }

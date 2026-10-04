@@ -1,20 +1,19 @@
 package com.example.app_calcular_idade
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.biometric.BiometricManager
-import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
-import java.util.concurrent.Executor
+import androidx.biometric.BiometricManager
 
 
 class LoginActivity : AppCompatActivity() {
@@ -22,12 +21,11 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var etEmail : EditText
     private lateinit var etSenha : EditText
     private lateinit var btnEntrar : Button
-    private lateinit var btnEntrarBiometria : Button
+    private lateinit var btnBiometria : Button
 
-    private lateinit var executor: Executor
-    private lateinit var biometricPrompt: BiometricPrompt
-    private lateinit var promptInfo: BiometricPrompt.PromptInfo
+    private val tipoAutenticacao = BIOMETRIC_STRONG
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -36,64 +34,9 @@ class LoginActivity : AppCompatActivity() {
         etEmail = findViewById<EditText>(R.id.etEmail)
         etSenha = findViewById<EditText>(R.id.etSenha)
         btnEntrar = findViewById<Button>(R.id.btnEntrar)
-        btnEntrarBiometria = findViewById<Button>(R.id.btnEntrarBiometria)
+        btnBiometria = findViewById<Button>(R.id.btnBiometria)
 
-        executor = ContextCompat.getMainExecutor(this)
 
-        biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
-            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                super.onAuthenticationError(errorCode, errString)
-                Toast.makeText(applicationContext, "Erro: $errString", Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                super.onAuthenticationSucceeded(result)
-                Toast.makeText(applicationContext, "Sucesso!", Toast.LENGTH_SHORT).show()
-
-                // Abre a próxima tela
-                val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-
-            override fun onAuthenticationFailed() {
-                super.onAuthenticationFailed()
-                Toast.makeText(applicationContext, "Digital incorreta", Toast.LENGTH_SHORT).show()
-            }
-        })
-
-        // Configurar a janela que vai subir na tela
-        promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Login Biométrico")
-            .setSubtitle("Use a sua digital ou rosto")
-            .setNegativeButtonText("Usar senha")
-            .build()
-
-        // =========================================================================
-        // SUBSTITUA A PARTE DO BIOMETRICMANAGER E DO CLIQUE POR ESTA:
-        // =========================================================================
-
-        // 1. Vamos testar o status da biometria imprimindo nos logs
-        val biometricManager = BiometricManager.from(this)
-        val autenticacaoStatus = biometricManager.canAuthenticate(BIOMETRIC_STRONG)
-
-        android.util.Log.d("BIOMETRIA_TESTE", "Status do sensor: $autenticacaoStatus")
-
-        // Forçar o botão a ficar visível para conseguirmos testar o clique
-        btnEntrarBiometria.visibility = View.VISIBLE
-
-        // 2. Novo clique do botão com logs e proteção contra erros
-        btnEntrarBiometria.setOnClickListener {
-            android.util.Log.d("BIOMETRIA_TESTE", "Botão clicado! Tentando abrir a janela...")
-
-            try {
-                // Dispara o prompt passando as configurações
-                biometricPrompt.authenticate(promptInfo)
-            } catch (e: Exception) {
-                android.util.Log.e("BIOMETRIA_TESTE", "Erro ao chamar o authenticate: ${e.message}")
-                Toast.makeText(this, "Falha interna: ${e.message}", Toast.LENGTH_LONG).show()
-            }
-        }
 
         btnEntrar.setOnClickListener {
 
@@ -102,10 +45,7 @@ class LoginActivity : AppCompatActivity() {
 
             if (email == "emailcerto@email.com" && senha == "1234") {
 
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-
-                finish()
+                realizarLogin()
 
             } else {
 
@@ -116,10 +56,8 @@ class LoginActivity : AppCompatActivity() {
 
         }
 
-        btnEntrarBiometria.setOnClickListener {
-
-
-
+        btnBiometria.setOnClickListener {
+            verificarDisponibilidadeEAutenticar()
         }
 
 
@@ -131,14 +69,57 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    // Esta função tem de ficar FORA do onCreate, diretamente dentro da classe LoginActivity
-    fun dispararBiometria(view: android.view.View) {
-        android.util.Log.d("BIOMETRIA_TESTE", "O Android ativou a função com sucesso pelo XML!")
-        try {
-            biometricPrompt.authenticate(promptInfo)
-        } catch (e: Exception) {
-            Toast.makeText(this, "Erro: ${e.message}", Toast.LENGTH_SHORT).show()
+    private fun verificarDisponibilidadeEAutenticar() {
+
+        when (BiometricManager.from(this).canAuthenticate(tipoAutenticacao)) {
+
+            BiometricManager.BIOMETRIC_SUCCESS -> exibirPromptBiometrico()
+
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED ->
+                mostrarMensagem("Cadastre uma biometria nas configurações do seu aparelho.")
+
+            else -> mostrarMensagem("Biometria indisponível neste aparelho.")
         }
+    }
+
+    private fun exibirPromptBiometrico() {
+
+        val executor = ContextCompat.getMainExecutor(this)
+
+        val callback = object : BiometricPrompt.AuthenticationCallback() {
+
+            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                realizarLogin()
+            }
+
+            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                val canceladoPeloUsuario =
+                    errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON ||
+                            errorCode == BiometricPrompt.ERROR_USER_CANCELED
+
+                if (!canceladoPeloUsuario) mostrarMensagem(errString.toString())
+            }
+
+        }
+
+        val informacoesDoPrompt = BiometricPrompt.PromptInfo.Builder()
+            .setTitle("Confirme a sua identidade Kchorro")
+            .setSubtitle("Use a sua biometria para entrar Curintia")
+            .setNegativeButtonText("Cancelar")
+            .setAllowedAuthenticators(tipoAutenticacao)
+            .build()
+
+        BiometricPrompt(this, executor, callback).authenticate(informacoesDoPrompt)
+
+    }
+
+    private fun mostrarMensagem(texto : String) {
+        Toast.makeText(this, texto, Toast.LENGTH_LONG).show()
+    }
+
+    private fun realizarLogin() {
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
 }

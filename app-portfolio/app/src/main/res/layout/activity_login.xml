@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity">
+
+    <ImageView
+        android:id="@+id/imgFatec"
+        android:layout_width="130dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="76dp"
+        android:layout_marginEnd="28dp"
+        app:layout_constraintEnd_toStartOf="@+id/imgCPS"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logo_fatec_santana" />
+
+    <ImageView
+        android:id="@+id/imgCPS"
+        android:layout_width="121dp"
+        android:layout_height="79dp"
+        android:layout_marginTop="76dp"
+        android:layout_marginEnd="64dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logo_cps" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvLoginGroup"
+        android:layout_width="321dp"
+        android:layout_height="390dp"
+        android:layout_marginTop="37dp"
+        app:cardCornerRadius="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgCPS">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                android:backgroundTint="#191A1C"
+                android:fontFamily="sans-serif-black"
+                android:text="Email"
+                android:textColor="#AD0F0A"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.146"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/etEmail"
+                android:layout_width="240dp"
+                android:layout_height="41dp"
+                android:layout_marginTop="8dp"
+                android:ems="10"
+                android:inputType="textEmailAddress"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.518"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvEmail" />
+
+            <TextView
+                android:id="@+id/tvSenha"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="56dp"
+                android:fontFamily="sans-serif-black"
+                android:text="Senha"
+                android:textColor="#AD0F0A"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.149"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etEmail" />
+
+            <EditText
+                android:id="@+id/etSenha"
+                android:layout_width="240dp"
+                android:layout_height="41dp"
+                android:layout_marginTop="8dp"
+                android:ems="10"
+                android:inputType="textPassword"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.518"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvSenha" />
+
+            <Button
+                android:id="@+id/btnEntrar"
+                android:layout_width="113dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="56dp"
+                android:layout_marginEnd="15dp"
+                android:backgroundTint="#283337"
+                android:text="Entrar"
+                app:layout_constraintEnd_toStartOf="@+id/btnSair"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etSenha" />
+
+            <Button
+                android:id="@+id/btnSair"
+                android:layout_width="113dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="56dp"
+                android:layout_marginEnd="40dp"
+                android:backgroundTint="#AD0F0A"
+                android:text="Sair"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etSenha" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnBiometria"
+        android:layout_width="322dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="36dp"
+        android:text="Entrar com Biometria"
+        app:backgroundTint="#283337"
+        app:icon="@drawable/icon_biometria"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp"
+        app:iconSize="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cvLoginGroup"
+        tools:ignore="MissingConstraints" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
